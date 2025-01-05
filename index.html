@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEXICANO AI</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .button {
+            background-color: yellow;
+            color: black;
+            font-weight: bold;
+            font-size: 1.5em;
+            text-transform: uppercase;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .spawned-image {
+            max-width: 300px;
+            max-height: 300px;
+            margin: 10px 0;
+            opacity: 0;
+            transform: scale(0);
+            animation: spawn-animation 0.5s ease-out forwards;
+        }
+
+        @keyframes spawn-animation {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .loading, .adding-final-touches {
+            margin-top: 20px;
+            display: none;
+            font-size: 1.2em;
+            color: yellow;
+            font-weight: bold;
+        }
+
+        .random-text {
+            font-size: 12px;
+            color: yellow;
+            position: absolute;
+            font-family: Arial, sans-serif;
+            letter-spacing: 1px;
+            text-transform: lowercase;
+        }
+
+        .arrow {
+            font-size: 1.5em;
+            color: yellow;
+            margin-top: 10px;
+            animation: arrow-animation 1s linear infinite;
+        }
+
+        @keyframes arrow-animation {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(5px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <video class="video-background" autoplay muted loop>
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="overlay"></div>
+
+    <div class="content">
+        <button class="button" onclick="spawnImage()">Generate Your Mexicano</button>
+        <div class="loading" id="loading">
+            Loading your Mexicano...
+        </div>
+        <div class="adding-final-touches" id="adding-final-touches">
+            Adding final touches...
+        </div>
+        <div class="image-container" id="image-container"></div>
+    </div>
+
+    <audio id="background-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const images = [
+            'image_1.png',
+            'image_2.png',
+            'image_3.jpg',
+            'image_4.png',
+            'image_5.png',
+            'image_6.png',
+            'image_7.png'
+        ];
+
+        let lastImageIndex = -1;
+
+        function playMusic() {
+            const audio = document.getElementById('background-music');
+            audio.play();
+        }
+
+        function spawnImage() {
+            const loadingDiv = document.getElementById('loading');
+            const addingFinalTouchesDiv = document.getElementById('adding-final-touches');
+            loadingDiv.style.display = 'block';
+
+            const imageContainer = document.getElementById('image-container');
+            imageContainer.innerHTML = '';
+
+            playMusic();
+
+            // Show the "Adding final touches" text 1 second after loading text
+            setTimeout(() => {
+                addingFinalTouchesDiv.style.display = 'block';
+            }, 1000);
+
+            setTimeout(() => {
+                loadingDiv.style.display = 'none';
+                addingFinalTouchesDiv.style.display = 'none';
+
+                let randomIndex = Math.floor(Math.random() * images.length);
+                while (randomIndex === lastImageIndex) {
+                    randomIndex = Math.floor(Math.random() * images.length);
+                }
+
+                const randomImage = images[randomIndex];
+
+                const img = document.createElement('img');
+                img.src = randomImage;
+                img.alt = randomImage;
+                img.className = 'spawned-image';
+
+                img.onload = () => {
+                    imageContainer.appendChild(img);
+                    lastImageIndex = randomIndex;
+
+                    spawnRandomText();
+                };
+
+                img.onerror = () => {
+                    console.error(`Error loading image: ${randomImage}`);
+                };
+            }, 2000); // 2 seconds delay for the loading text
+        }
+
+        function removePreviousRandomText() {
+            const previousText = document.querySelectorAll('.random-text');
+            previousText.forEach(text => text.remove());
+        }
+
+        function spawnRandomText() {
+            removePreviousRandomText();
+
+            const text = "CA: BgC4KAGE4EvigA7JYXf9y5W3JuhzKdVsp2N5oLdwpump";
+            const randomTextDiv = document.createElement('div');
+            randomTextDiv.className = 'random-text';
+
+            const randomX = Math.floor(Math.random() * window.innerWidth);
+            const randomY = Math.floor(Math.random() * window.innerHeight);
+
+            randomTextDiv.style.left = `${randomX}px`;
+            randomTextDiv.style.top = `${randomY}px`;
+
+            randomTextDiv.innerText = text;
+            document.body.appendChild(randomTextDiv);
+        }
+    </script>
+</body>
+</html>
